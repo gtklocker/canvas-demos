@@ -30,9 +30,13 @@ function drawTriangle( ctx, a, b, c, color ) {
     ctx.lineTo( b[ 0 ], b[ 1 ] );
     ctx.lineTo( c[ 0 ], c[ 1 ] );
     ctx.closePath();
-    //ctx.fill();
+    ctx.fill();
     ctx.stroke();
 }
+
+var ccw = function ( a, b, c ) {
+    return ( b[ 0 ] - a[ 0 ] ) * ( c[ 1 ] - a[ 1 ] ) - ( b[ 1 ] - a[ 1 ] ) * ( c[ 0 ] - a[ 0 ] );
+};
 
 var vertices = [
     [ -1, 1, 1, 1 ],
@@ -78,11 +82,12 @@ var project = [
     [ 0, 0, 4, 1 ]
 ];
 
-// Rotation matrices from http://mariosal.logimus.com/graphics-examples/cube/
 var theta = 0;
+var colors = [ "red", "blue", "green", "yellow", "cyan", "white" ];
 var render = function () {
     ctx.clearRect( 0, 0, W, H );
-    theta += Math.PI / 180;
+    theta += 0.05;
+    // Rotation matrices from http://mariosal.logimus.com/graphics-examples/cube/
     var rotateX = [
         [ 1, 0,                  0,                  0 ],
         [ 0, Math.cos( theta ),  Math.sin( theta ),  0 ],
@@ -103,7 +108,15 @@ var render = function () {
         var v = function ( i ) {
             return new_vertices[ indices[ index ][ i ] ];
         };
-        drawTriangle( ctx, v( 0 ), v( 1 ), v( 2 ), "black" );
+        var a = v( 0 );
+        var b = v( 1 );
+        var c = v( 2 );
+
+        if ( ccw( a, b, c ) > 0.5 ) {
+            drawTriangle( ctx, a, b, c, colors[ index / 2 ] );
+        }
     }
 }
+
 setInterval( render, 17 );
+//render();
