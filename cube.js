@@ -6,7 +6,7 @@ var W = 800, H = 600;
 var VIEWPORT_SCALE = W / 2;
 var VIEWPORT_OFFSET = W / 2;
 function drawTriangle( ctx, a, b, c, color ) {
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = color;
     ctx.fillStyle = color;
     ctx.beginPath();
     var finalProjection = function ( point ) {
@@ -83,7 +83,7 @@ var project = [
 ];
 
 var theta = 0;
-var colors = [ "red", "blue", "green", "yellow", "cyan", "white" ];
+var colors = [ "gray", "blue", "red", "orange", "purple", "white" ];
 var render = function () {
     ctx.clearRect( 0, 0, W, H );
     theta += 0.05;
@@ -119,4 +119,3 @@ var render = function () {
 }
 
 setInterval( render, 17 );
-//render();
