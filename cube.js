@@ -1,13 +1,20 @@
 var canvas = document.getElementById( "canv" );
 var ctx = canvas.getContext( "2d" );
 
-var VIEWPORT_SCALE = 100;
+var VIEWPORT_SCALE = 400;
 var VIEWPORT_OFFSET = 400;
 function drawTriangle( ctx, a, b, c, color ) {
     ctx.strokeStyle = 'black';
     ctx.fillStyle = color;
     ctx.beginPath();
+    var finalProjection = function ( point ) {
+        return [
+            point[ 0 ] / point[ 2 ],
+            point[ 1 ] / point[ 2 ]
+        ];
+    };
     var viewportTransform = function ( point ) {
+        point = finalProjection( point );
         return [
             VIEWPORT_SCALE * point[ 0 ] + VIEWPORT_OFFSET,
             800 - ( VIEWPORT_SCALE * point[ 1 ] + VIEWPORT_OFFSET )
@@ -26,14 +33,14 @@ function drawTriangle( ctx, a, b, c, color ) {
 }
 
 var vertices = [
-    [ -1, 1, 1 ],
-    [ 1, 1, 1 ],
-    [ 1, -1, 1 ],
-    [ -1, -1, 1 ],
-    [ -1, 1, -1 ],
-    [ 1, 1, -1 ],
-    [ 1, -1, -1 ],
-    [ -1, -1, -1 ]
+    [ -1, 1, 1, 1 ],
+    [ 1, 1, 1, 1 ],
+    [ 1, -1, 1, 1 ],
+    [ -1, -1, 1, 1 ],
+    [ -1, 1, -1, 1 ],
+    [ 1, 1, -1, 1  ],
+    [ 1, -1, -1, 1 ],
+    [ -1, -1, -1, 1 ]
 ];
 
 var indices = [
@@ -61,6 +68,15 @@ var indices = [
     [ 3, 7, 6 ],
     [ 3, 6, 2 ]
 ];
+
+var project = [
+    [ 1, 0, 0, 0 ],
+    [ 0, 1, 0, 0 ],
+    [ 0, 0, -0.5, 0 ],
+    [ 0, 0, 4, 1 ]
+];
+
+vertices = $M( vertices ).x( $M( project ) ).elements;
 
 for ( var index = 0; index < indices.length; ++index ) {
     var v = function ( i ) {
