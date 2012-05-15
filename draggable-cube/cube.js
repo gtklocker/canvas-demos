@@ -98,13 +98,13 @@ var render = function () {
         [ Math.sin( thetaY ), 0, Math.cos( thetaY ),  0 ],
         [ 0,                 0, 0,                  1 ]
     ];
-    var new_vertices = $M( vertices ).x( $M( rotateX ) ).elements;
-    new_vertices = $M( new_vertices ).x( $M( rotateY ) ).elements;
-    new_vertices = $M( new_vertices ).x( $M( project ) ).elements;
+    vertices = $M( vertices ).x( $M( rotateX ) ).elements;
+    vertices = $M( vertices ).x( $M( rotateY ) ).elements;
+    var projectVertices = $M( vertices ).x( $M( project ) ).elements;
 
     for ( var index = 0; index < indices.length; ++index ) {
         var v = function ( i ) {
-            return new_vertices[ indices[ index ][ i ] ];
+            return projectVertices[ indices[ index ][ i ] ];
         };
         var a = v( 0 );
         var b = v( 1 );
@@ -116,7 +116,7 @@ var render = function () {
     }
 }
 var thetaX = 0.0, thetaY = 0.0;
-render();
+setInterval( render, 17 );
 
 var mousePos, oldTheta;
 document.onmousedown = function ( e ) {
@@ -124,18 +124,15 @@ document.onmousedown = function ( e ) {
         x: e.clientX,
         y: e.clientY
     };
-    oldTheta = {
-        x: thetaX,
-        y: thetaY
-    };
     document.onmousemove = function ( e ) {
-        thetaY = oldTheta.y + -( mousePos.x - e.clientX ) / 100;
-        thetaX = oldTheta.x + -( mousePos.y - e.clientY ) / 100;
-        render();
+        thetaY = -( mousePos.x - e.clientX ) / 500;
+        thetaX = -( mousePos.y - e.clientY ) / 500;
     };
 };
 
 document.onmouseup = function ( e ) {
+    thetaX = 0.0;
+    thetaY = 0.0;
     document.onmousemove = function ( e ) {
     }
 };
