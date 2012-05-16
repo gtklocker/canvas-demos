@@ -116,7 +116,7 @@ var render = function () {
     }
 }
 var thetaX = 0.0, thetaY = 0.0;
-setInterval( render, 17 );
+render();
 
 var mousePos, oldTheta;
 document.onmousedown = function ( e ) {
@@ -125,8 +125,13 @@ document.onmousedown = function ( e ) {
         y: e.clientY
     };
     document.onmousemove = function ( e ) {
-        thetaY = -( mousePos.x - e.clientX ) / 500;
-        thetaX = -( mousePos.y - e.clientY ) / 500;
+        thetaY = -( mousePos.x - e.clientX ) / 100;
+        thetaX = -( mousePos.y - e.clientY ) / 100;
+        render();
+        mousePos = {
+            x: e.clientX,
+            y: e.clientY
+        };
     };
 };
 
