@@ -6,8 +6,8 @@ var W = 800, H = 600, nH = H * 1.15;
 var VIEWPORT_SCALE = W / 2;
 var VIEWPORT_OFFSET = W / 2;
 function drawTriangle( ctx, a, b, c, color ) {
-    ctx.strokeStyle = "gray";
-    ctx.fillStyle = flatShading( a, b, c );
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
     ctx.beginPath();
     var finalProjection = function ( point ) {
         return [
@@ -87,7 +87,6 @@ var sortIndices = function () {
         return z1 - z2;
     } );
 };
-sortIndices();
 
 var render = function () {
     ctx.clearRect( 0, 0, W, H );
@@ -108,15 +107,19 @@ var render = function () {
     vertices = $M( vertices ).x( $M( rotateY ) ).elements;
     var projectVertices = $M( vertices ).x( $M( project ) ).elements;
 
+    sortIndices();
     for ( var index = 0; index < indices.length; ++index ) {
-        var v = function ( i ) {
+        var getProjected = function ( i ) {
             return projectVertices[ indices[ index ][ i ] ];
         };
-        var a = v( 0 );
-        var b = v( 1 );
-        var c = v( 2 );
+        var getVanilla = function ( i ) {
+            return vertices[ indices[ index ][ i ] ];
+        };
+        var a = getProjected( 0 );
+        var b = getProjected( 1 );
+        var c = getProjected( 2 );
 
-        var clr = flatShading( a, b, c );
+        var clr = flatShading( getVanilla( 0 ), getVanilla( 1 ), getVanilla( 2 ) );
         if ( ccw( a, b, c ) > 0 ) {
             drawTriangle( ctx, a, b, c, clr );
         }
@@ -133,7 +136,6 @@ document.onmousedown = function ( e ) {
     document.onmousemove = function ( e ) {
         thetaY = -( mousePos.x - e.clientX ) / 100;
         thetaX = -( mousePos.y - e.clientY ) / 100;
-        sortIndices();
         render();
         mousePos = {
             x: e.clientX,
