@@ -150,8 +150,10 @@ document.onmouseup = function ( e ) {
 };
 
 document.onmousewheel = function ( e ) {
-    var delta = e.wheelDelta / 1200;
+    var pa = project[ 0 ][ 0 ], pb = project[ 1 ][ 1 ];
+    var delta = Math.min( pa, pb ) / 10 * e.wheelDelta / 120;
     project[ 0 ][ 0 ] += delta;
     project[ 1 ][ 1 ] += delta;
+
     render();
 };
