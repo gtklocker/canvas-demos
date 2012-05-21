@@ -4,6 +4,13 @@ var BLOCK_W = W / 10, BLOCK_H = H / 20;
 
 var render = function () {
     ctx.clearRect( 0, 0, W, H );
+    if ( GAME_OVER ) {
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.font = "bold 50px Arial";
+        ctx.fillText( "Game over", W / 2, H / 2 );
+        return;
+    }
     ctx.strokeStyle = 'white';
     ctx.fillStyle = 'white';
     for ( var y = 0; y < 20; ++y ) {
@@ -27,10 +34,18 @@ var render = function () {
 
 newShape();
 render();
-setInterval( render, 200 );
-setInterval( tick, 200 );
-document.onkeypress = function ( e ) {
-    console.log( e.keyCode );
+setInterval( render, 600 );
+var tickLoop = setInterval( function () {
+    if ( !GAME_OVER ) {
+        tick();
+    }
+    else {
+        clearInterval( tickLoop );
+        clearBoard();
+    }
+}, 600 );
+
+document.body.onkeydown = function ( e ) {
     keyPress( e.keyCode );
     render();
 };

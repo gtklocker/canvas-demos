@@ -1,3 +1,5 @@
+var GAME_OVER = 0;
+
 var shapes = [
    [ 1, 1, 1, 1 ],
    [ 1, 1, 1, 0,
@@ -25,14 +27,15 @@ var color = [
 ];
 
 var board = [];
-( function () {
+var clearBoard = function () {
     for ( var x = 0; x < 10; ++x ) {
         board[ x ] = [];
         for ( var y = 0; y < 20; ++y ) {
             board[ x ][ y ] = 0;
         }
     }
-} )();
+};
+clearBoard();
 
 var current = [];
 ( function () {
@@ -44,7 +47,7 @@ var current = [];
     }
 } )();
 
-var currentY = 0, currentX = 4;
+var currentY = 0, currentX = 0;
 
 var copyShape = function ( index ) {
     for ( var i = 0; i < 16; ++i ) {
@@ -59,17 +62,43 @@ var copyShape = function ( index ) {
 
 var newShape = function () {
     copyShape( Math.floor( Math.random() * 10 ) % 7 );
-    currentX = 5;
-    currentY = 0;
+    currentX = 4;
+    currentY = -10;
 };
 
 var tick = function () {
-    if ( valid( currentX, currentY + 1, current ) ) {
+    if ( !GAME_OVER && valid( currentX, currentY + 1, current ) ) {
         ++currentY;
     }
     else {
         freeze( current );
+        //detect if a line has been made
+        for ( var y = currentY; y < currentY + 4 && y < board[ 0 ].length; ++y ) {
+            var noLine = true;
+            for ( var x = 0; x < 10; ++x ) {
+                if ( board[ x ][ y ] == 0 ) {
+                    noLine = false;
+                    break;
+                }
+            }
+
+            if ( noLine ) {
+                console.log( "Line created" );
+                for ( var upY = y - 1; upY >= 0; --upY ) {
+                    for ( var upX = 0; upX < 10; ++upX ) {
+                        board[ upX ][ upY + 1 ] = board[ upX ][ upY ];
+                    }
+                }
+            }
+        }
+
         newShape();
+        if ( valid( currentX, currentY + 10, current ) ) {
+            currentY += 10;
+        }
+        else {
+            GAME_OVER = 1;
+        }
     }
 };
 
@@ -77,10 +106,10 @@ var valid = function ( x, y, current ) {
     for ( var i = x; i < x + 4; ++i ) {
         for ( var j = y; j < y + 4; ++j ) {
             if ( current[ i - x ][ j - y ] ) {
-                if ( board[ i ][ j ] ||
-                    j < 0 || i < 0 ||
+                if ( j + 1 > board[ 0 ].length ||
                     i + 1 > board.length ||
-                    j + 1 > board[ i ].length ) {
+                    j < 0 || i < 0 ||
+                    board[ i ][ j ] != 0 ) {
                     return false;
                 }
             }
@@ -113,23 +142,23 @@ var rotate = function ( current ) {
 
 var keyPress = function ( key ) {
     switch ( key ) {
-        case 104: // h
+        case 37: // h
             if ( valid( currentX - 1, currentY, current ) ) {
                 --currentX;
             }
             break;
-        case 106: // j
+        case 40: // j
             if ( valid( currentX, currentY + 1, current ) ) {
                 ++currentY;
             }
             break;
-        case 107: // k
+        case 38: // k
             var rotated = rotate( current );
             if ( valid( currentX, currentY + 1, rotated ) ) {
                 current = rotated;
             }
             break;
-        case 108: // l
+        case 39: // l
             if ( valid( currentX + 1, currentY, current ) ) {
                 ++currentX;
             }
