@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Sine visualisation</title>
+        <style>
+            body {
+                background-color: #000;
+            }
+            canvas {
+                display: block;
+                margin: 15% 0px 0px -8px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <canvas width='600' height='200'></canvas>
+        <script src='sine.js'></script>
+        <script>
+            var sine = new Sine( document.querySelector( 'canvas' ) );
+        </script>
+    </body>
+</html>
